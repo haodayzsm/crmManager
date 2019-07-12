@@ -25,10 +25,11 @@ public class UserAction extends BaseAction<User>{
 		User user = userService.login(model);
 		System.out.println(top.haodayzsm.utils.MD5Utils.md5(model.getPassword()));
 		if(user==null){
+			this.addActionError("用户名或密码错误");
+			System.out.println(this.getActionErrors());
 			return LOGIN;
 		}else{
 			ServletActionContext.getRequest().getSession().setAttribute("user", user);
-			System.out.println(user);
 			return SUCCESS;
 		}
 	}
