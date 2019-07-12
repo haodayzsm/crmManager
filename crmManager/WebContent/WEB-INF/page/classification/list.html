@@ -1,0 +1,124 @@
+<head>
+	<meta charset="UTF-8">
+</head>
+<div data-options="region:'center',border:false">
+	<table id="class-datagrid" class="easyui-datagrid" url="json_classificationAction_list"
+		toolbar="#class-tool" rownumbers="true" fitColumns="true" singleSelect="true">
+		<thead>
+			<tr>
+				<th field="classification_id" width="10" >分类编号</th>
+				<th field="name" name='name' width="30" >分类名字</th>
+				<th field="remarks" width="60">备注</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="class_add()" plain="true">添加</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="class_edit()" plain="true">修改</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="class_remove()" plain="true">删除</a>				
+            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="class_reload()" plain="true" onclick="reload()">刷新</a>
+		</tfoot>
+	</table>
+	
+</div>
+<div id="add_classification" class="easyui-dialog" data-options="closed:true">
+	<form id="add-form" method="post">
+		<table >
+			<tr><th>分类ID：</th>
+				<td><input id="classification-id" readonly="readonly" type="text" name="classification_id" class="wu-text" /></td></tr>
+			<tr><th>分类名字：</th>
+				<td><input id="classification-name" type="text" name="name" class="wu-text" /></td></tr>
+			<tr><th>备注：</th>
+				<td><input id="classification-remarks" type="text" name="remarks" class="wu-text" /></td></tr>
+		</table>
+	</form>
+</div>
+<script type="text/javascript">
+	function class_add(){
+		$('#classification-id').val('');
+		$('#classification-name').val('');
+		$('#classification-remarks').val('');
+		$('#add_classification').dialog({
+			closed:false,
+			width:300,
+			height:200,
+			iconCls:'icon-save',
+			title:'添加分类信息',
+			buttons: [{
+                text: '确定',
+                iconCls: 'icon-ok',
+                handler: function(){
+                	$('#add-form').form('submit',{
+                		url:'json_classificationAction_save',
+						success:function(data){
+							if(data=='true'){
+								$.messager.alert('信息提示','提交成功！','info');
+								$('#add_classification').dialog('close');
+							}else{
+								$.messager.alert('信息提示','提交失败！','info');
+							}
+							class_reload();
+						}	
+                	});
+                }	
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $('#add_classification').dialog('close');                    
+                }
+            }]
+		});
+		class_reload();
+	}
+	function class_edit(){
+		var a=$('#class-datagrid').datagrid('getSelected');
+		$('#classification-id').val(a.classification_id);
+		$('#classification-name').val(a.name);
+		$('#classification-remarks').val(a.remarks);
+		$('#add_classification').dialog({
+			closed:false,
+			width:300,
+			height:200,
+			iconCls:'icon-edit',
+			title:'更新分类信息',
+			buttons: [{
+                text: '确定',
+                iconCls: 'icon-ok',
+                handler: function(){
+                	$('#add-form').form('submit',{
+                		url:'json_classificationAction_updata',
+						success:function(data){
+							if(data=='true'){
+								$.messager.alert('信息提示','提交成功！','info');
+								$('#add_classification').dialog('close');
+							}else{
+								$.messager.alert('信息提示','提交失败！','info');
+							}
+							class_reload();
+						}	
+                	});
+                }	
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $('#add_classification').dialog('close');                    
+                }
+            }]
+		});
+	}
+	function class_remove(){
+		$.ajax({
+			type:"post",
+			url:'json_classificationAction_delete',
+			data:$('#class-datagrid').datagrid('getSelected'),
+			success:function(){
+				class_reload();
+			}
+		});
+	}
+	function class_reload(){
+		$('#class-datagrid').datagrid('reload');
+	}
+</script>
+

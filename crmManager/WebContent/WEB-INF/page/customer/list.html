@@ -1,0 +1,185 @@
+<head>
+	<meta charset="UTF-8">
+</head>
+<div>
+	<table id="cust-table" class="easyui-datagrid"  ></table>
+</div>
+<div id="cust-dialog" class="easyui-dialog" data-options="closed:true">
+	<form id="cust-form" method="post" >
+		<table>
+			<tr>
+				<th>id：</th>
+				<td><input id='cust-id' class="easyui-validatebox" name="customer_id" readonly="readonly"/></td>
+			</tr>
+			<tr>
+				<th>名字：</th>
+				<td><input id='cust-name' class="easyui-validatebox" name="name"
+					data-options="required:true"/>*</td>
+			</tr>
+			<tr>
+				<th>联系电话：</th>
+				<td><input id='cust-tel' class="easyui-validatebox" name="tel"
+					data-options="required:true"/>*</td>
+			</tr>
+			<tr>
+				<th>地址：</th>
+				<td><input id='cust-location' class="easyui-validatebox" name="location"
+					data-options="required:true"/>*</td>
+			</tr>
+			<tr>
+				<th>微信：</th>
+				<td><input  id='cust-wehat' class="easyui-validatebox" name="wechat"/></td>
+			</tr>
+		</table>
+	</form>
+</div>
+<script type="text/javascript">
+	
+	//初始化
+	$(function(){
+		//表格列
+		var cust_columns=[[
+			{title:'编号',field:'customer_id',checkbox:true},
+			{title:'客户名称',field:'name',width:10},
+			{title:'电话',field:'tel',width:15},
+			{title:'地址',field:'location',width:15},
+			{title:'微信',field:'wechat',width:15},
+			{title:'账户情况',field:'money',width:10,formatter:money_formatter}
+		]]
+		//表格工具栏
+		var cust_tool=[
+			{text:'添加',iconCls:'icon-add',handler:cust_add},
+			{text:'编辑',iconCls:'icon-edit',handler:cust_edit},
+			{text:'删除',iconCls:'icon-remove',handler:cust_remove},
+			{text:'刷新',iconCls:'icon-reload',handler:cust_reload}
+		]
+		//创建表格
+		$('#cust-table').datagrid({
+			columns:cust_columns,	//列数据
+			toolbar:cust_tool,		//工具栏
+			fitColumns:"true",		//按比例分配列宽
+			//data:customers			//加载本地数据
+			url:'json_customerAction_list'
+		});
+		//money字段负数为红色
+		function money_formatter(val,row){
+			if(val<0){
+				return '<span style="color:red;">'+val+'</span>';
+			}else{
+				return val;
+			}
+		};
+	})
+	
+	//添加客户方法
+	function cust_add(){
+		$('#cust-id').val(null);
+		$('#cust-name').val(null);
+		$('#cust-location').val(null);
+		$('#cust-tel').val(null);
+		$('#cust-wehat').val(null); 
+		function add(){
+			$('#cust-form').form('submit',{
+				url:'json_customerAction_save',
+				success:function (data){
+					if(data=='true'){
+						$.messager.alert('信息提示','保存成功！','info');
+						$('#cust-dialog').dialog('close');
+						cust_reload();
+					}else{
+						$.messager.alert('信息提示','保存失败！','info');
+						cust_reload();
+					}
+				}
+			});
+			
+		};
+		$('#cust-dialog').dialog({
+			closed:false,
+			title:'添加客户信息',
+			width:420,
+			height:380,
+			iconCls:'icon-save',
+			buttons:[
+				{
+					text:'确定',
+					iconCls:'icon-ok',
+					handler:add
+				},{
+					text:'取消',
+					iconCls:'icon-cancel',
+					handler:function(){
+						$('#cust-dialog').dialog('close');
+					}
+				}
+			]
+		});
+
+	} 
+	
+	//编辑客户方法
+	function cust_edit(){
+		var customer=$('#cust-table').datagrid('getSelected');
+		if(customer!=null){
+			$('#cust-id').val(customer.customer_id);
+			$('#cust-name').val(customer.name);
+			$('#cust-location').val(customer.location);
+			$('#cust-tel').val(customer.tel);
+			$('#cust-wehat').val(customer.wehat);
+			$('#cust-dialog').dialog({
+				closed:false,
+				title:'修改客户信息',
+				width:'320',
+				height:'220',
+				buttons:[
+					{
+						text:'确定',
+						iconCls:'icon-ok',
+						handler:edit
+					},{
+						text:'取消',
+						iconCls:'icon-cancel',
+						handler:function(){
+							$('#cust-dialog').dialog('close');
+						}
+					}
+				]
+			});
+		}
+		function edit(){
+			$('#cust-form').form('submit',{
+				url:'json_customerAction_updata',
+				success:function(data){
+					if(data=='true'){
+						$.messager.alert('信息提示','更新成功！','info');
+						$('#cust-dialog').dialog('close');
+					}else{
+						$.messager.alert('信息提示','更新失败！','info');
+					}
+					cust_reload();
+				}
+			});
+		};
+	}
+	
+	//删除客户方法
+	function cust_remove(){
+		$.ajax({
+			type:"post",
+			url:'json_customerAction_delete',
+			data:$('#cust-table').datagrid('getSelected'),
+			//async:true,
+			success:function(data){
+				if(data){
+					$.messager.alert('信息提示','删除成功！','info');
+				}else{
+					$.messager.alert('信息提示','删除失败！','info');
+				}
+				cust_reload();
+			}
+		});
+	}
+	function cust_reload(){
+		$('#cust-table').datagrid('reload');
+	}
+</script>

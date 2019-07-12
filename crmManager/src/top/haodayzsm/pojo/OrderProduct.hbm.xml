@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="top.haodayzsm.pojo">
+	<class name="OrderProduct" table="orderProduct">
+		<id name="orderProduct_id">
+			<generator class="native"/>
+		</id>
+		<property name="quantity"></property>
+		<property name="unitPrice"></property>
+		<property name="total"></property>
+		<property name="piece"></property>
+		<property name="packing"></property>
+		<property name="product"></property>
+		<property name="product_id" not-null="true"></property>
+		<property name="color"></property>
+		<property name="color_id" not-null="true"></property>
+		
+	</class>
+</hibernate-mapping>

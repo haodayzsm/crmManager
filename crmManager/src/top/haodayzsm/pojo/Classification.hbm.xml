@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="top.haodayzsm.pojo">
+	<class name="Classification" table="classification">
+		<id name="classification_id">
+			<generator class="native"/>
+		</id>
+		<property name="name"></property>
+		<property name="remarks"></property>
+		<set name="product" cascade="all">
+			<key><column name="classification_id"></column></key>
+			<one-to-many class="Product"/>
+		</set>
+	</class>
+</hibernate-mapping>

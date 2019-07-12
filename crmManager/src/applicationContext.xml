@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+		xmlns="http://www.springframework.org/schema/beans" 
+		xmlns:aop="http://www.springframework.org/schema/aop"
+		xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:p="http://www.springframework.org/schema/p"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+							http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+							http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+							http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd"  >
+	
+	<!-- 读取db.properties文件，配置c3p0连接池 -->
+	<context:property-placeholder location="classpath:db2.properties"/>
+	<bean name="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClass}"></property>
+		<property name="jdbcUrl" value="${jdbc.jdbcUrl}"></property>
+		<property name="user" value="${jdbc.user}"></property>
+		<property name="password" value="${jdbc.password}"></property>		
+	</bean>
+	
+	<!-- 开启注解配置事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<bean name="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" >
+		<property name="dataSource" ref="dataSource"></property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect" >org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.format_sql">true</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property> 
+		<property name="mappingDirectoryLocations"  >
+			<list>
+				<value>classpath:top/haodayzsm/pojo</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- hibernate核心事务管理器 -->
+	<bean name="hibernateManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" ></property>
+	</bean> 
+	
+	<!-- 组件扫描 （注解） -->
+	<context:component-scan base-package="top.haodayzsm"></context:component-scan>
+	<!-- 开启注解 -->
+	<context:annotation-config/>
+	
+	<!-- 配置事务通知 -->
+	<tx:annotation-driven/>
+	<tx:advice id="txAdvice" transaction-manager="hibernateManager">
+		<tx:attributes>
+			<tx:method name="find*" isolation="REPEATABLE_READ" propagation="REQUIRED"  />	
+			<tx:method name="save" propagation="REQUIRED"/>
+			<tx:method name="updata" propagation="REQUIRED" read-only="false"/>
+			<tx:method name="*" propagation="REQUIRED" read-only="false"/>
+		</tx:attributes>	
+	</tx:advice>
+	
+ 	<aop:config >
+		<aop:pointcut expression="execution(* top.haodayzsm.service.impl.*.*(..))"  id="txDao"/>
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="txDao"/>
+	</aop:config>
+</beans>
+
+
+
+
+
+
+
+
+

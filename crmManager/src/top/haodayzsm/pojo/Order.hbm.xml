@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="top.haodayzsm.pojo">
+	<class name="Order" table="aorder">
+		<id name="aorder_id">
+			<generator class="native"/>
+		</id>
+		<property name="number"></property>
+		<property name="remarks"></property>
+		<property name="date" type="java.util.Date"></property>
+		<property name="total"></property>
+		<property name="money"></property>
+		<property name="type"></property>
+		<property name="user"></property>
+		<property name="user_id" not-null="true"></property>
+		<property name="customer"></property>
+		<property name="customer_id" not-null="true"></property>
+		<set name="orderProduct" cascade="all">
+			<key><column name="order_id"></column></key>
+			<one-to-many class="OrderProduct"/>
+		</set>
+	</class>
+</hibernate-mapping>

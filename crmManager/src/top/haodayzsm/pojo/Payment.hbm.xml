@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="top.haodayzsm.pojo">
+	<class name="Payment" table="payment">
+		<id name="payment_id">
+			<generator class="native"/>
+		</id>
+		<property name="date" type="java.util.Date"></property>
+		<property name="money"></property>
+		<property name="customer"></property>
+		<property name="customer_id" not-null="true"></property>
+	</class>
+</hibernate-mapping>

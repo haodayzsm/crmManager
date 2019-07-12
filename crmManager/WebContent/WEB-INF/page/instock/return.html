@@ -1,0 +1,264 @@
+<head><meta charset="utf-8"/></head>
+<div class="easyui-layout" fit="true">
+	<div data-options="region:'north',split:true," style="height:100px;">
+		<form id="instockReturn-form" method="post">
+		<table id="instockReturn-tool" style="padding:12px;width:100%;hetght:100%">
+			<tr >
+				<th>单号：</th><th><input id="number" name="number" class="easyui-validatebox" readonly="readonly" value="jh201905210001" /></th>
+				<th>应付金额：</th>
+				<td><input id="instockReturn-total" name="total" class="easyui-validatebox" readonly="readonly"/></td>
+				<th>日期：</th>
+				<td><input id="instockReturn-date" name="date" class="easyui-datebox" data-options="valueField:'id',textField:'text'"/></td>
+			</tr>
+			<tr>
+				<th>供应商：</th>
+				<td><input id="instockReturn-supplier" name="supplier_id" class="easyui-combobox" data-options="valueField:'id',textField:'text',url:'json_supplierAction_combobox'"/></td>
+				<th>已付金额：</th>
+				<td><input id="instockReturn-money" name="money" class="easyui-numberbox"/></td>
+				<th colspan="2" ><a class="easyui-linkbutton" onclick="instockReturn_submit()">提交</a></th>
+			</tr>
+		</table>	
+		</form>		
+	</div>
+	<div data-options="region:'center',split:true">
+		<table id="instockReturn-datagrid" class="easyui-datagrid" ></table>
+	</div>
+</div>
+
+<div id="instockReturn-window" class="easyui-window" data-options="closed:true" >
+	<div class="easyui-layout" fit="true" style="width: 100%;height: 100%" >
+		<div region="west" style="width:220px;"  >
+			<div class="easyui-tabs" fit="true">
+				<div title="按分类添加" style="padding:10px" >
+					<ul id="classification-tree" class="easyui-tree add-tree"></ul>
+				</div>
+				<div title="按供应商添加" style="padding:10px">
+					<ul id="supplier-tree" class="easyui-tree add-tree"></ul>
+				</div>
+			</div>
+		</div>
+		<div region="center" >
+			<table style="padding:18px;width:100%;height:100%;">
+				<tr>
+					<th>商品id：</th>
+					<td><input id="inReturn-product_id"  name="number" class="easyui-validatebox" readonly="readonly" data-options="required:true"/></td>
+				</tr>
+				<tr>
+					<th>商品编号：</th>
+					<td><input id="inReturn-number"  name="number" class="easyui-validatebox" readonly="readonly" data-options="required:true"/></td>
+				</tr>
+				<tr>
+					<th>商品名称：</th>
+					<td><input id="inReturn-name"  name="name" class="easyui-validatebox" readonly="readonly" data-options="required:true"/></td>
+				</tr>
+				<tr>
+					<th>供应商：</th>
+					<td><input id="inReturn-supplier" name="supplier" class="easyui-validatebox" readonly="readonly" data-options="required:true"/></td>
+				</tr>
+				<tr>
+					<th>商品分类：</th>
+					<td><input id="inReturn-classification" name="classification" class="easyui-validatebox " readonly="readonly" data-options="required:true"/></td>
+				</tr>
+				<tr>
+					<th>色号：</th>
+					<td><input id="inReturn-color"  name="color" class="easyui-validatebox" data-options="required:true"/></td>
+				</tr>
+				<tr>
+					<th>价格：</th>
+					<td><input id="inReturn-untiPrice" name="untiPrice" class="easyui-numberbox" data-options="required:true"/></td>
+				</tr>
+				<tr>
+					<th>数量：</th>
+					<td><input id="inReturn-quantity" name="quantity" class="easyui-numberbox" data-options="required:true"/></td>
+				</tr>
+				<tr>
+					<th>包装：</th>
+					<td><input id="inReturn-packing" name="packing" class="easyui-numberbox" data-options="required:true"/></td>
+				</tr>
+			</table>
+		</div>
+		<div data-options="region:'south',split:true" style="height:40px;">
+			<table style="width:100%">
+				<tr>
+					<td>
+						<input id="number"  name="number" class="easyui-validatebox"/>
+					</td>
+					<td>
+						<a class="easyui-linkbutton" data-options="iconCls:'icon-search'">搜索</a>
+					</td>
+					<td>
+						<a onclick="instockReturn_ok()" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" >添加</a>
+					</td>
+					<td>
+						<a onclick="instockReturn_cancel()" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'">取消</a>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(function(){
+		var instockReturn_columns = [[
+			{checkbox:true},
+			{title:'商品编号',field:'number',name:'number', width:10},
+			{title:'商品名称',field:'name',name:'name',width:10},
+			{title:'商品类别',field:'classsification',width:6},
+			{title:'色号',field:'color',name:'color',width:5},
+			{title:'单价',field:'unitPrice',name:'unitPrice',width:5},
+			{title:'数量',field:'quantity',name:'quantity',width:5},
+			{title:'包装数量',field:'packing',name:'packing',width:5},
+			{title:'件数',field:'piece',name:'piece',width:5},
+			{title:'合计',field:'total',name:'total',width:10}
+		]];
+		var instockReturn_tool=[
+			{text:'添加',iconCls:'icon-add',handler:instockReturn_add},
+			{text:'编辑',iconCls:'icon-edit',handler:instockReturn_edit},
+			{text:'删除',iconCls:'icon-remove',handler:instockReturn_remove}
+		]
+		$('#instockReturn-datagrid').datagrid({
+			columns:instockReturn_columns,
+			fitColumns:true,
+			toolbar:instockReturn_tool
+		});
+		$('.add-tree').tree({
+			onDblClick:function (node){
+				getProduct(node.id);
+			}
+		});
+	});
+	function getProduct(id){
+		if(id==null){
+		}else{
+			$.ajax({
+				type:"post",
+				url:'json_productAction_findById',
+				async:false,
+				data:'product_id='+id,
+				success:function(data){
+					$('#inReturn-product_id').val(data.product_id);
+					$('#inReturn-number').val(data.number);
+					$('#inReturn-name').val(data.name);
+					$('#inReturn-classification').val(data.classification);
+					$('#inReturn-supplier').val(data.supplier);
+					$('#inReturn-packing').val(data.packing);
+				}
+			});
+		}
+	}
+	function instockReturn_submit(){
+		var i=$('#instockReturn-datagrid').datagrid('getRows');
+		var j=JSON.stringify(i);
+		$('#instockReturn-form').form('submit',{
+			url:'json_storageAction_orderSubmit',
+			onSubmit: function(param){
+				if(j=='[]'){
+					alert('表单没有商品');
+					return false;
+				}
+				if($('#instockReturn-date').combobox('getText')==''){
+					alert('时间不能为空');
+					return false;
+				}
+				if($('#instockReturn-supplier').combobox('getText')==''){
+					alert('客户不能为空');
+					return false;
+				}
+				if(!$(this).form('validate')){
+					return false;
+				}
+				instockReturn_total();
+				param.type='return';
+				param.products=j;
+			},
+			success:function(){
+				updataTree("退货");
+			}
+		})
+	}
+	function instockReturn_init(){
+		$('#classification-tree').tree({
+			url:"json_classificationAction_tree"
+		});
+		$('#supplier-tree').tree({
+			url:"json_supplierAction_tree"
+		});
+		$('#instockReturn-window').window({
+			title:'添加商品',
+			closed:false,
+			width:550,
+			height:360
+		}); 
+	}
+	function instockReturn_total(){
+		var num=0;
+		var products=$('#instockReturn-datagrid').datagrid('getRows');
+		for(var i=0;i<products.length;i++){
+			num=products[i].total+num;
+		}
+		$('#total').val(num);
+	}
+	function instockReturn_add(){
+		$('#inReturn-product_id').val(null);
+		$('#inReturn-number').val(null);
+		$('#inReturn-name').val(null);
+		$('#inReturn-classification').val(null);
+		$('#inReturn-supplier').val(null);
+		$('#inReturn-packing').val(null);
+		$('#inReturn-untiPrice').val(null);
+		$('#inReturn-quantity').val(null);
+		$('#inReturn-color').val(null);
+		instockReturn_init();
+	}
+	
+	function instockReturn_cancel(){
+		$('#instockReturn-window').window('close');
+	}
+	function instockReturn_ok(){
+		var in_total = $('#inReturn-untiPrice').val()*$('#inReturn-quantity').val();
+		var in_piece = $('#inReturn-quantity').val()/$('#inReturn-packing').val();
+		if($('#inReturn-name').val()==''){
+			alert('请选择商品');
+			return;
+		}
+		if($('#inReturn-quantity').val()==''){
+			alert('数量不能为空');
+			return;
+		}
+		if($('#inReturn-color').combobox('getText')==''){
+			alert('色号不能为空');
+			return;
+		}
+		if($('#inReturn-untiPrice').val()==''){
+			alert('单价不能为空');
+			return;
+		}
+		var intock_product = {
+			'product_id':$('#inReturn-product_id').val(),
+			'name':$('#inReturn-name').val(),
+			'number':$('#inReturn-number').val(),
+			'classification':$('#inReturn-classification').val(),
+			'color':$('#inReturn-color').val(), 
+			'unitPrice':$('#inReturn-untiPrice').val(),
+			'quantity':$('#inReturn-quantity').val(),
+			'packing':$('#inReturn-packing').val(),
+			'piece':in_piece,
+			'total':in_total}
+		$('#instockReturn-datagrid').datagrid('appendRow',intock_product);
+		$('#instockReturn-window').window('close');
+		instockReturn_total();
+	}
+	function instockReturn_edit(){
+		var product=$('#instockReturn-datagrid').datagrid('getSelected');
+		getProduct(product.product_id);
+		$('#inReturn-untiPrice').val(product.unitPrice);
+		$('#inReturn-quantity').val(product.quantity);
+		$('#inReturn-color').val(product.color);
+		instockReturn_init();
+	}
+	function instockReturn_remove(){
+		var rowIndex=$('#instockReturn-datagrid').datagrid('getRowIndex',$('#instockReturn-datagrid').datagrid('getSelected'));
+		$('#instockReturn-datagrid').datagrid('deleteRow',rowIndex)
+	}
+</script>

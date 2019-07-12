@@ -1,0 +1,190 @@
+<head><meta charset="UTF-8"></head>
+<div>
+	<table id="product-table" class="easyui-datagrid"  ></table>
+</div>
+<div id="product-dialog" class="easyui-dialog" data-options="closed:true" 
+	style=" width: 350px; height: 300px; padding: 10px;">
+	<form id="product-form" method="post" >
+		<table>
+			<tr>
+				<th>id：</th>
+				<td><input id='product-id' class="easyui-validatebox" name="product_id" readonly="readonly"/>不用输入</td>
+			</tr>
+			<tr>
+				<th>商品编号：</th>
+				<td><input id='product-number' class="easyui-validatebox" name="number"
+					data-options="required:true"/>*</td>
+			</tr>
+			<tr>
+				<th>商品名字：</th>
+				<td><input id='product-name' class="easyui-validatebox" name="name"
+					data-options="required:true,valueField:'id', textField:'text' "/>*</td>
+			</tr>
+			<tr>
+				<th>商品分类：</th>
+				<td><input id='product-classification' class="easyui-combobox" name="classification_id" url='json_classificationAction_combobox'
+					data-options="required:true,valueField:'id', textField:'text' "/>*</td>
+			</tr>
+			<tr>
+				<th>供应商：</th>
+				<td><input id='product-supplier' class="easyui-combobox" name="supplier_id" url='json_supplierAction_combobox'
+					data-options="required:true,valueField:'id', textField:'text' "/>*</td>
+			</tr>
+			<tr>
+				<th>批发价：</th>
+				<td><input id='product-wholesale' class="easyui-numberbox" name="wholesalePrice"/></td>
+			</tr>
+			<tr>
+				<th>零售价：</th>
+				<td><input  id='product-retail' class="easyui-numberbox" name="retailPrice"/></td>
+			</tr>
+			<tr>
+				<th>包装：</th>
+				<td><input  id='product-packing' class="easyui-numberbox" name="packing"/></td>
+			</tr>
+		</table>
+	</form>
+</div>
+<script type="text/javascript">
+	
+	//初始化
+	$(function(){
+		//表格列
+		var product_columns=[[
+			{title:'编号',field:'product_id',checkbox:true},
+			{title:'商品编号',field:'number',width:10},
+			{title:'商品名称',field:'name',width:10},
+			{title:'商品分类',field:'classification',width:12},
+			{title:'供应商',field:'supplier',width:15},
+			{title:'批发价',field:'wholesalePrice',width:8},
+			{title:'零售价',field:'retailPrice',width:8},
+			{title:'包装',field:'packing',width:8}
+		]]
+		//表格工具栏
+		var product_tool=[
+			{text:'添加',iconCls:'icon-add',handler:product_add},
+			{text:'编辑',iconCls:'icon-edit',handler:product_edit},
+			{text:'删除',iconCls:'icon-remove',handler:product_remove},
+			{text:'刷新',iconCls:'icon-reload',handler:product_reload}
+		]
+		//创建表格
+		$('#product-table').datagrid({
+			columns:product_columns,	//列数据
+			toolbar:product_tool,		//工具栏
+			fitColumns:"true",		//按比例分配列宽
+			url:'json_productAction_list'
+		});
+	})
+	
+	//添加客户方法
+	function product_add(){
+		$('#product-id').val(null);
+		$('#product-name').val(null);
+		$('#product-number').val(null);
+		$('#product-wholesale').val(null); 
+		$('#product-retail').val(null); 
+		$('#product-packing').val(null); 
+		function add(){
+			$('#product-form').form('submit',{
+				url:'json_productAction_saveOrUpdata',
+				success:function (data){
+					if(data=='true'){
+						$.messager.alert('信息提示','保存成功！','info');
+						$('#product-dialog').dialog('close');
+					}else{
+						$.messager.alert('信息提示','保存失败！','info');
+					}
+					product_reload();
+				}
+			});
+			
+		};
+		$('#product-dialog').dialog({
+			closed:false,
+			title:'添加商品信息',
+			iconCls:'icon-remove',
+			buttons:[
+				{
+					text:'确定',
+					iconCls:'icon-ok',
+					handler:add
+				},{
+					text:'取消',
+					iconCls:'icon-cancel',
+					handler:function(){
+						$('#product-dialog').dialog('close');
+					}
+				}
+			]
+		});
+
+	} 
+	
+	//编辑客户方法
+	function product_edit(){
+		var product=$('#product-table').datagrid('getSelected');
+		if(product!=null){
+			$('#product-id').val(product.product_id);
+			$('#product-name').val(product.name);
+			$('#product-number').val(product.number);
+			$('#product-classification').combobox('setValue',product.classification_id);
+			$('#product-supplier').combobox('setValue',product.supplier_id);
+			$('#product-wholesale').val(product.wholesalePrice); 
+			$('#product-retail').val(product.retailPrice); 
+			$('#product-dialog').dialog({
+				closed:false,
+				title:'修改商品信息',
+				buttons:[
+					{
+						text:'确定',
+						iconCls:'icon-ok',
+						handler:edit
+					},{
+						text:'取消',
+						iconCls:'icon-cancel',
+						handler:function(){
+							$('#product-dialog').dialog('close');
+						}
+					}
+				]
+			});
+		}
+		function edit(){
+			$('#product-form').form('submit',{
+				url:'json_productAction_saveOrUpdata',
+				success:function(data){
+					if(data=='true'){
+						$.messager.alert('信息提示','更新成功！','info');
+						$('#product-dialog').dialog('close');
+					}else{
+						$.messager.alert('信息提示','更新失败！','info');
+					}
+					product_reload();
+				}
+			});
+		};
+	}
+	
+	//删除客户方法
+	function product_remove(){
+		$.ajax({
+			type:"post",
+			//url:'json_productAction_delete',
+			url:'json_productAction_tree',
+			data:$('#product-table').datagrid('getSelected'),
+			//async:true,
+			success:function(data){
+				if(data=='true'){
+					$.messager.alert('信息提示','删除成功！','info');
+				}else{
+					$.messager.alert('信息提示','删除失败！','info');
+				}
+				product_reload();
+			}
+		});
+	}
+	function product_reload(){
+		$('#product-table').datagrid('reload');
+	}
+</script>
+

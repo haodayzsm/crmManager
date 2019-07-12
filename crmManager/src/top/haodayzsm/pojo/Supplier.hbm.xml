@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="top.haodayzsm.pojo">
+	<class name="Supplier" table="supplier">
+		<id name="supplier_id">
+			<generator class="native"/>
+		</id>
+		<property name="name"></property>
+		<property name="location"></property>
+		<property name="money"></property>
+		<set name="product">
+			<key><column name="supplier_id"></column></key>
+			<one-to-many class="Product"/>
+		</set>
+		<set name="supplierReturn" cascade="all">
+			<key><column name="supplier_id"></column></key>
+			<one-to-many class="SupplierReturn"/>
+		</set>
+		<set name="storage" cascade="all">
+			<key><column name="supplier_id"></column></key>
+			<one-to-many class="Storage"/>
+		</set>
+		<set name="supplierPayment" cascade="all">
+			<key><column name="supplier_id"></column></key>
+			<one-to-many class="SupplierPayment"/>
+		</set>
+	</class>
+</hibernate-mapping>

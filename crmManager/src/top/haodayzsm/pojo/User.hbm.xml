@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="top.haodayzsm.pojo">
+	<class name="User" table="user">
+		<id name="user_id">
+			<generator class="native"/>
+		</id>
+		<property name="username"></property>
+		<property name="password"></property>
+		<property name="name"></property>
+		<property name="number"></property>
+		<property name="login"></property>
+		<property name="ldentity"></property>
+		<property name="ldentity_id" not-null="true"></property>
+		<set name="permission" table="user_permission">
+			<key>
+				<column name="user_id" ></column>
+			</key>
+			<many-to-many class="Permission" column="permission_id" ></many-to-many>
+		</set>
+		
+	</class>
+</hibernate-mapping>

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="top.haodayzsm.pojo">
+	<class name="Product" table="product">
+		<id name="product_id">
+			<generator class="native"/>
+		</id>
+		<property name="name"></property>
+		<property name="number"></property>
+		<property name="costPrice"></property>
+		<property name="wholesalePrice"></property>
+		<property name="retailPrice"></property>
+		<property name="specification"></property>
+		<property name="classification"></property>
+		<property name="quantity"></property>
+		<property name="packing"></property>
+		<property name="classification_id" not-null="true"></property>
+		<property name="supplier"></property>
+		<property name="supplier_id"></property>
+		<set name="color" cascade="all">
+			<key><column name="product_id"></column></key>
+			<one-to-many class="Color"/>
+		</set>
+
+	</class>
+</hibernate-mapping>

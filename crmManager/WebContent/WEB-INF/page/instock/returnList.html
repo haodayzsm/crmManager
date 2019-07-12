@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<script type="text/javascript">
+		$(function(){
+			$('#storageReturn').datagrid({
+				columns:[[
+					{title:'日期',field:'date',width:8},
+					{title:'订单编号',field:'number',width:8},
+					{title:'供应商',field:'supplier',width:8},
+					{title:'合计金额',field:'total',width:5},
+					{title:'付款金额',field:'money',width:5},
+					{title:'开单人',field:'user',width:5},
+					{title:'备注',field:'remarks',width:15}
+				]],
+				singleSelect:true,
+				fitColumns:true,	//按比例分配列宽
+				onSelect:function(rowIndex,rowData){
+					storageReturn_getOrderProduct(rowData.storage_id);
+				}
+			});
+			$('#storageReturn-products').datagrid({
+				columns:[[
+					{title:'商品编号',field:'number',width:8},
+					{title:'商品名称',field:'product',width:8},
+					{title:'色号',field:'color',width:5},
+					{title:'单价',field:'unitPrice',width:5},
+					{title:'数量',field:'quantity',width:5},
+					{title:'合计',field:'total',width:8}
+				]],
+				title:'订单详情',
+				fitColumns:true
+			})
+		})
+		function storageReturn_find(){
+			$('#storageReturn-form').form('submit',{
+				url:'json_storageAction_findStorageReturn',
+				success: function (data){
+					if(data!=null){		
+						$('#storageReturn').datagrid('loadData',eval("(" + data + ")"));
+					}
+				}
+			})
+		}
+		function storageReturn_getOrderProduct(storage_id){
+			$.ajax({
+				type:'post',
+				url:'json_storageAction_getOrderProduct',
+				data:'storage_id='+storage_id,
+				success:function (data){
+					if(data!=null){						
+						$('#storageReturn-products').datagrid('loadData',data);
+					}
+				}
+			})
+		}
+	</script>
+</head>
+<div class="easyui-layout" style="width: 100%;height: 100% ;">
+	<div data-options="region:'north'" style="height:85px;">
+		<form id="storageReturn-form" method="post">
+		<table id="instock-tool" style="padding:12px;width:100%;height:100%">
+			<tr >
+				<th>供应商：</th>
+				<td><input name="supplier_id" class="easyui-combobox" data-options="valueField:'id',textField:'text',url:'json_supplierAction_combobox'"/></td>
+				<th>商品编号：</th>
+				<td><input name="number" class="easyui-validatebox"/></td>
+			</tr>
+			<tr>
+				<th>开始日期：</th>
+				<td><input id="start-data" name="start" class="easyui-datebox" data-options="valueField:'id',textField:'text'"/></td>
+				<th>结束日期：</th>
+				<td><input id="end-date" name="end" class="easyui-datebox" data-options="valueField:'id',textField:'text'"/></td>
+				<th colspan="2" ><a class="easyui-linkbutton" onclick="storageReturn_find()">查询</a></th>
+			</tr>
+		</table>	
+		</form>	
+	</div>
+	<div data-options="region:'center'">
+		<table id="storageReturn" class="easyui-datagrid"></table>
+	</div>
+	<div data-options="region:'south'" style="height:250px;">
+		<table id="storageReturn-products" class="easyui-datagrid" ></table>
+	</div>
+</div>
+</html> 

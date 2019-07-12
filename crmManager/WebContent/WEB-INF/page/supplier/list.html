@@ -1,0 +1,131 @@
+<head>
+	<meta charset="UTF-8">
+</head>
+<div data-options="region:'center',border:false">
+	<table id="supplier-datagrid" class="easyui-datagrid" url="json_supplierAction_list"
+		rownumbers="true" fitColumns="true" singleSelect="true">
+		<thead>
+			<tr>
+				<th field="supplier_id" name="supplier_id" width="10" >厂家编号</th>
+				<th field="name" name='name' width="20" >厂家名字</th>
+				<th field="location" name='location' width="30" >厂家地址</th>
+				<th field="remarks" width="60">备注</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="supplier_add()" plain="true">添加</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="supplier_edit()" plain="true">修改</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="supplier_remove()" plain="true">删除</a>				
+            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="supplier_reload()" plain="true" onclick="reload()">刷新</a>
+		</tfoot>
+	</table>
+	
+</div>
+<div id="add_supplier" class="easyui-dialog" data-options="closed:true">
+	<form id="supplier-form" method="post">
+		<table >
+			<tr><th>厂家ID：</th>
+				<td><input id="supplier-id" readonly="readonly" type="text" name="supplier_id" class="wu-text" /></td></tr>
+			<tr><th>厂家名字：</th>
+				<td><input id="supplier-name" type="text" name="name" class="wu-text" /></td></tr>
+			<tr><th>厂家地址：</th>
+				<td><input id="supplier-location" type="text" name="location" class="wu-text" /></td></tr>
+			<tr><th>备注：</th>
+				<td><input id="supplier-remarks" type="text" name="remarks" class="wu-text" /></td></tr>
+		</table>
+	</form>
+</div>
+<script type="text/javascript">
+	function supplier_add(){
+		$('#supplier-id').val('');
+		$('#supplier-name').val('');
+		$('#supplier-location').val('');
+		$('#supplier-remarks').val('');
+		$('#add_supplier').dialog({
+			closed:false,
+			width:300,
+			height:200,
+			iconCls:'icon-save',
+			title:'添加供应商信息',
+			buttons: [{
+                text: '确定',
+                iconCls: 'icon-ok',
+                handler: function(){
+                	$('#supplier-form').form('submit',{
+                		url:'json_supplierAction_save',
+						success:function(data){
+							if(data=='true'){
+								$.messager.alert('信息提示','提交成功！','info');
+								$('#add_supplier').dialog('close');
+							}else{
+								$.messager.alert('信息提示','提交失败！','info');
+							}
+							class_reload();
+						}	
+                	});
+                }	
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $('#add_supplier').dialog('close');                    
+                }
+            }]
+		});
+		class_reload();
+	}
+	function supplier_edit(){
+		var a=$('#supplier-datagrid').datagrid('getSelected');
+		$('#supplier-id').val(a.supplier_id);
+		$('#supplier-name').val(a.name);
+		$('#supplier-location').val(a.location);
+		$('#supplier-remarks').val(a.remarks);
+		$('#add_supplier').dialog({
+			closed:false,
+			width:300,
+			height:200,
+			iconCls:'icon-edit',
+			title:'更新供应商信息',
+			buttons: [{
+                text: '确定',
+                iconCls: 'icon-ok',
+                handler: function(){
+                	$('#supplier-form').form('submit',{
+                		url:'json_supplierAction_updata',
+						success:function(data){
+							if(data=='true'){
+								$.messager.alert('信息提示','提交成功！','info');
+								$('#add_supplier').dialog('close');
+							}else{
+								$.messager.alert('信息提示','提交失败！','info');
+							}
+							supplier_reload();
+						}	
+                	});
+                }	
+            }, {
+                text: '取消',
+                iconCls: 'icon-cancel',
+                handler: function () {
+                    $('#add_supplier').dialog('close');                    
+                }
+            }]
+		});
+		supplier_reload();
+	}
+	function supplier_remove(){
+		$.ajax({
+			type:"post",
+			url:'json_supplierAction_delete',
+			data:$('#supplier-datagrid').datagrid('getSelected'),
+			success:function(){
+				supplier_reload();
+			}
+		});
+		supplier_reload();
+	}
+	function supplier_reload(){
+		$('#supplier-datagrid').datagrid('reload');
+	}
+</script>
+

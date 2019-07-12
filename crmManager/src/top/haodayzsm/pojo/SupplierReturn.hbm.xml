@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="top.haodayzsm.pojo">
+	<class name="SupplierReturn" table="supplierReturn">
+		<id name="supplierReturn_id">
+			<generator class="native"/>
+		</id>
+		<property name="number"></property>
+		<property name="Remarks"></property>
+		<property name="date"></property>
+		<property name="total"></property>
+		<property name="payment"></property>
+		<property name="user"></property>
+		<property name="user_id" not-null="true"></property>
+		<property name="supplier"></property>
+		<property name="userpplier_id" not-null="true"></property>
+		<set name="orderproduct">
+			<key><column name="supplierReturn_id"></column></key>
+			<one-to-many class="StorageProduct"/>
+		</set>
+	</class>
+</hibernate-mapping>
