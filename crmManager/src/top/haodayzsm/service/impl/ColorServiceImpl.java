@@ -16,4 +16,9 @@ public class ColorServiceImpl implements IColorService {
 	public boolean delete(Color color){
 		return colorDao.delete(color);
 	}
+	@Override
+	public Color findByProductId(Long id) {
+		return colorDao.findByProductId(id);
+	}
+	
 }

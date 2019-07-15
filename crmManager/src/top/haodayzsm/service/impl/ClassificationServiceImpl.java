@@ -11,10 +11,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import top.haodayzsm.dao.IClassificationDao;
+import top.haodayzsm.dao.IProductDao;
 import top.haodayzsm.pojo.Classification;
 import top.haodayzsm.pojo.Product;
 import top.haodayzsm.pojo.Supplier;
 import top.haodayzsm.service.IClassificationService;
+import top.haodayzsm.service.IProductService;
 
 @Service(value="classificationService")
 @Scope(value="prototype")
@@ -22,6 +24,8 @@ import top.haodayzsm.service.IClassificationService;
 public class ClassificationServiceImpl implements IClassificationService {
 	@Resource(name="classificationDao")
 	IClassificationDao classificationDao;
+	@Resource(name="productService")
+	IProductService productService;
 	@Override
 	public boolean save(Classification classification) {
 		return classificationDao.save(classification);
@@ -31,11 +35,19 @@ public class ClassificationServiceImpl implements IClassificationService {
 	public boolean updata(Classification classification) {
 		return classificationDao.updata(classification);
 	}
-
+	/**
+	 * 删除分类信息，如该分类下面有商品删除商品后删除该分类
+	 */
 	@Override
 	public boolean delete(Classification classification) {
-		return classificationDao.delete(classification);
-
+		while(true){
+			Product product=productService.findByClassId(classification.getClassification_id());
+			if(product!=null){
+				productService.delete(product);
+			}else{
+				return classificationDao.delete(classification);
+			}
+		}
 	}
 
 	@Override

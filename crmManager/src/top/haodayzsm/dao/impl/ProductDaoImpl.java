@@ -19,4 +19,9 @@ public class ProductDaoImpl extends BaseDaoImpl<Product> implements IProductDao 
 		}
 		
 	}
+	public Product findByClassId(Long id){
+		String hql="from Product p where p.classification_id=?";
+		List list=(List<Product>) this.getHibernateTemplate().find(hql, id);
+		return (Product) list.get(0);
+	}
 }

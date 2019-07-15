@@ -14,4 +14,5 @@ public interface IProductService {
 	public boolean updata(Product model);
 	public boolean saveOrUpdata(Product model);
 	public boolean updataQuantity(Long product_id);
+	public Product findByClassId(Long id);
 }

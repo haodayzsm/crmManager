@@ -8,11 +8,13 @@ import org.springframework.stereotype.Service;
 
 import net.sf.json.JSONObject;
 import net.sf.json.JsonConfig;
+import top.haodayzsm.dao.IColorDao;
 import top.haodayzsm.dao.IProductDao;
 import top.haodayzsm.pojo.Classification;
 import top.haodayzsm.pojo.Color;
 import top.haodayzsm.pojo.Product;
 import top.haodayzsm.pojo.Supplier;
+import top.haodayzsm.service.IColorService;
 import top.haodayzsm.service.IProductService;
 import top.haodayzsm.utils.PageBean;
 @Service(value="productService")
@@ -20,6 +22,8 @@ public class ProductServiceImpl implements IProductService {
 	@Resource(name="productDao")
 	IProductDao productDao;
 	Classification classification;
+	@Resource(name="colorService")
+	IColorService colorService;
 	Supplier supplier;
 	@Override
 	public void pageProduct(PageBean pageBean) {
@@ -28,7 +32,6 @@ public class ProductServiceImpl implements IProductService {
 	@Override
 	public List findByAll() {
 		return productDao.findAll();
-		
 	}
 	@Override
 	public String findById(Product product) {
@@ -39,9 +42,19 @@ public class ProductServiceImpl implements IProductService {
 		String json=jsonProduct.toString();
 		return json;
 	}
+	/**
+	 * 删除商品信息，product下有color信息删除color信息后再删除product
+	 */
 	@Override
 	public boolean delete(Product model) {
-		return productDao.delete(model);
+		while(true){
+			Color color = colorService.findByProductId(model.getProduct_id());
+			if(color!=null){
+				colorService.delete(color);
+			}else{						
+				return productDao.delete(model);			
+			}
+		}
 	}
 	@Override
 	public boolean updata(Product model) {
@@ -104,5 +117,9 @@ public class ProductServiceImpl implements IProductService {
 			return true;
 		}
 		return false;
+	}
+	@Override
+	public Product findByClassId(Long id) {
+		return productDao.findByClassId(id);
 	}
 }

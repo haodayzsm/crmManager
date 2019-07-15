@@ -15,6 +15,3 @@ function removeClass(id){
 		}
 	});
 }
-function removeProduct(id){
-	
-}

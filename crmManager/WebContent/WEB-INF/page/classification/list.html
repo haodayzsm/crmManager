@@ -112,8 +112,23 @@
 			type:"post",
 			url:'json_classificationAction_delete',
 			data:$('#class-datagrid').datagrid('getSelected'),
-			success:function(){
-				class_reload();
+			success:function(data){
+				if(data=="true"){
+					class_reload();
+				}/* else if(data=="false"){
+					$.ajax({
+						type:"post",
+						url:'json_productAction_delete',
+						data:product_id=$('#class-datagrid').datagrid('getSelected').classification_id,
+						success:function(data){
+							if(data=="true"){
+								class_reload();
+							}else if(data=="false"){
+								
+							}
+						}
+					});
+				} */
 			}
 		});
 	}
