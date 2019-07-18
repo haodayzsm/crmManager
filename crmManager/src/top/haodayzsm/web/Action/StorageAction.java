@@ -18,7 +18,6 @@ import net.sf.json.JsonConfig;
 import top.haodayzsm.pojo.Product;
 import top.haodayzsm.pojo.Storage;
 import top.haodayzsm.service.IStorageService;
-import top.haodayzsm.utils.Utils;
 import top.haodayzsm.web.impl.BaseAction;
 @Controller(value="storageAction")
 @Scope(value="prototype")
@@ -60,10 +59,10 @@ public class StorageAction extends BaseAction<Storage> {
 		JsonConfig jsonConfig=new JsonConfig();
 		jsonConfig.setExcludes(new String[]{"orderProuct"});
 		JSONArray json=JSONArray.fromObject(storages,jsonConfig);
-		Utils.printJson(json.toString());
+		this.printJson(json.toString());
 	}
 	public String getOrderProduct() throws IOException{
-		Utils.printJson(storageService.findById(model.getStorage_id()));
+		this.printJson(storageService.findById(model.getStorage_id()));
 		return null;
 	}
 	

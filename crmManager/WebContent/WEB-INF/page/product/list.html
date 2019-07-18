@@ -45,8 +45,8 @@
 		</table>
 	</form>
 </div>
+
 <script type="text/javascript">
-	
 	//初始化
 	$(function(){
 		//表格列
@@ -64,8 +64,12 @@
 		var product_tool=[
 			{text:'添加',iconCls:'icon-add',handler:product_add},
 			{text:'编辑',iconCls:'icon-edit',handler:product_edit},
-			{text:'删除',iconCls:'icon-remove',handler:product_remove},
-			{text:'刷新',iconCls:'icon-reload',handler:product_reload}
+			{text:'删除',iconCls:'icon-remove',handler:function(){
+				deletePojo($('#product-table').datagrid('getSelected').product_id,'json_productAction_delete',$('#product-table'))
+			}},
+			{text:'刷新',iconCls:'icon-reload',handler:function(){
+				reloadDatagrid($('#product-table'));
+			}}
 		]
 		//创建表格
 		$('#product-table').datagrid({
@@ -84,6 +88,8 @@
 		$('#product-wholesale').val(null); 
 		$('#product-retail').val(null); 
 		$('#product-packing').val(null); 
+		$('#product-classification').combobox('reload');
+		$('#product-supplier').combobox('reload');
 		function add(){
 			$('#product-form').form('submit',{
 				url:'json_productAction_saveOrUpdata',
@@ -94,7 +100,7 @@
 					}else{
 						$.messager.alert('信息提示','保存失败！','info');
 					}
-					product_reload();
+					reloadDatagrid($('#product-table'));
 				}
 			});
 			
@@ -120,7 +126,7 @@
 
 	} 
 	
-	//编辑客户方法
+	//编辑商品方法
 	function product_edit(){
 		var product=$('#product-table').datagrid('getSelected');
 		if(product!=null){
@@ -159,32 +165,10 @@
 					}else{
 						$.messager.alert('信息提示','更新失败！','info');
 					}
-					product_reload();
+					reloadDatagrid($('#product-table'));
 				}
 			});
 		};
-	}
-	
-	//删除客户方法
-	function product_remove(){
-		$.ajax({
-			type:"post",
-			//url:'json_productAction_delete',
-			url:'json_productAction_tree',
-			data:$('#product-table').datagrid('getSelected'),
-			//async:true,
-			success:function(data){
-				if(data=='true'){
-					$.messager.alert('信息提示','删除成功！','info');
-				}else{
-					$.messager.alert('信息提示','删除失败！','info');
-				}
-				product_reload();
-			}
-		});
-	}
-	function product_reload(){
-		$('#product-table').datagrid('reload');
 	}
 </script>
 

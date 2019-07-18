@@ -3,22 +3,15 @@ package top.haodayzsm.web.Action;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-
 import javax.annotation.Resource;
-
 import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JsonConfig;
-import top.haodayzsm.pojo.Customer;
 import top.haodayzsm.pojo.Order;
-import top.haodayzsm.pojo.Storage;
-import top.haodayzsm.service.ICustomerService;
 import top.haodayzsm.service.IOrderService;
-import top.haodayzsm.utils.Utils;
 import top.haodayzsm.web.impl.BaseAction;
 @Component(value="orderAction")
 @Scope(value="prototype")
@@ -32,7 +25,7 @@ public class OrderAction extends BaseAction<Order> {
 	IOrderService orderService;
 	public String orderSubmit() throws IOException{
 		
-		Utils.print(orderService.order(model, products));
+		this.print(orderService.order(model, products));
 		return NONE;
 	}
 	public String findSales() throws IOException{
@@ -59,17 +52,13 @@ public class OrderAction extends BaseAction<Order> {
 		JsonConfig jsonConfig=new JsonConfig();
 		jsonConfig.setExcludes(new String[]{"orderProuct"});
 		JSONArray json=JSONArray.fromObject(orders,jsonConfig);
-		Utils.printJson(json.toString());
+		this.printJson(json.toString());
 		return null;
 	}
 	public String getOrderProduct() throws IOException{
-		Utils.printJson(orderService.findById(model.getAorder_id()));
+		this.printJson(orderService.findById(model.getAorder_id()));
 		return null;
 	}
-	
-	
-	
-	
 
 	public String getType() {
 		return type;

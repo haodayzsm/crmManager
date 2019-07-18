@@ -20,6 +20,9 @@ import top.haodayzsm.utils.PageBean;
 @Scope(value="prototype")
 public class BaseDaoImpl<T> extends HibernateDaoSupport implements IBaseDao<T> {
 	Class<T> entityClass;
+	String className;
+	String columnName;
+	char c;
 	
 	/**
 	 * 通过构造方法获得entityClass的实体类
@@ -31,6 +34,12 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements IBaseDao<T> {
 		Type[] Arguments = Superclass.getActualTypeArguments();
 		//用Arguments创建对象
 		entityClass = (Class<T>) Arguments[0];
+		className = entityClass.getSimpleName()+" ";
+		char[] chars=className.toCharArray();
+		c=(char) (chars[0]+32);
+		chars[0]=c;
+		columnName=String.valueOf(chars);
+		
 	}
 	@Override
 	public boolean save(T entity) {
@@ -42,7 +51,11 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements IBaseDao<T> {
 			return false;
 		}
 	}
-
+	@Override
+	public List findAllActivation(String status){
+		String hql="from "+className+c+" where "+c+"."+"status=?";
+		return this.getHibernateTemplate().find(hql,status);
+	}
 	@Override
 	public boolean updata(T entity) {
 		try {
@@ -147,5 +160,25 @@ public class BaseDaoImpl<T> extends HibernateDaoSupport implements IBaseDao<T> {
 	public List findByCondition(DetachedCriteria criteria) {
 		return this.getHibernateTemplate().findByCriteria(criteria);
 	}
-	
+	public List findById(Long id){
+		String className=entityClass.getSimpleName();
+		char[] c=className.toCharArray();
+		c[0]=(char) (c[0]+32);
+		String columnName=String.valueOf(c);
+		String hql = "from "+className+" entity where entity."+columnName+"_id=?";
+		return this.getHibernateTemplate().find(hql, id);
+	}
+	@Override
+	public boolean deleteById(Long id) {
+		List list = this.findById(id);
+		if(list.size()>0){
+			return this.delete((T) list.get(0));
+		}
+		return false;
+	}
+	@Override
+	public List findByCondition(Long id, String key) {
+		String hql="from "+className+c+" where "+c+"."+key+"=?";
+		return this.getHibernateTemplate().find(hql, id);
+	}
 }

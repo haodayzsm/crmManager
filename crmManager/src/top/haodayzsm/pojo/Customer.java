@@ -10,6 +10,7 @@ public class Customer implements java.io.Serializable{
 	private String location;
 	private String wechat;
 	private Integer money;
+	private String status="activation";
 	private Set<Payment> payment=null;//¸¶¿îÁ÷Ë®
 	private Set<Order> order=new HashSet<Order>();
 	private Set<CustomerReturn> orderReturn=new HashSet<CustomerReturn>();
@@ -67,5 +68,11 @@ public class Customer implements java.io.Serializable{
 	}
 	public void setMoney(Integer money) {
 		this.money = money;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
 	}
 }

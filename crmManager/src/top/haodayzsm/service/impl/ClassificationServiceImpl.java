@@ -3,6 +3,7 @@ package top.haodayzsm.service.impl;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 import javax.annotation.Resource;
 
@@ -10,6 +11,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import top.haodayzsm.dao.IClassificationDao;
 import top.haodayzsm.dao.IProductDao;
 import top.haodayzsm.pojo.Classification;
@@ -36,18 +39,11 @@ public class ClassificationServiceImpl implements IClassificationService {
 		return classificationDao.updata(classification);
 	}
 	/**
-	 * 删除分类信息，如该分类下面有商品删除商品后删除该分类
+	 * 删除分类信息，级联删除该分类的商品与色号
 	 */
 	@Override
-	public boolean delete(Classification classification) {
-		while(true){
-			Product product=productService.findByClassId(classification.getClassification_id());
-			if(product!=null){
-				productService.delete(product);
-			}else{
-				return classificationDao.delete(classification);
-			}
-		}
+	public boolean delete(Long id) {
+		return classificationDao.deleteById(id);
 	}
 
 	@Override
@@ -59,38 +55,68 @@ public class ClassificationServiceImpl implements IClassificationService {
 	public List findAll() {
 		return classificationDao.findAll();
 	}
-	public String tree(){
+//	@Override
+//	public String tree(){
+//		List<Classification> list = classificationDao.findAll();
+//		StringBuffer json=new StringBuffer("[");
+//		int a=0;
+//		for(Classification cla:list){
+//			json.append("{");
+//			json.append("\"text\":");
+//			json.append(" \""+cla.getName()+"\",");
+//			int b=0;
+//			a++;
+//			json.append("\"children\":[");
+//			for(Product product:cla.getProduct()){
+//				json.append("{");
+//				json.append("\"id\":");
+//				json.append("\""+product.getProduct_id().toString()+"\",");
+//				json.append("\"text\":");
+//				json.append(" \""+product.getNumber()+"\"");
+//				b++;
+//				if(b<cla.getProduct().size()){
+//					json.append("},");
+//				}else{
+//					json.append("}");
+//				}
+//			}
+//			json.append("]");
+//			if(a<list.size()){
+//				json.append("},");
+//			}else{
+//				json.append("}");
+//			}
+//		}
+//		json.append("]");
+//		return json.toString();
+//	}
+//	
+	/*
+	 * 返回以适合tree格式的json字符串
+	 */
+	@Override
+	public String tree() {
 		List<Classification> list = classificationDao.findAll();
-		StringBuffer json=new StringBuffer("[");
-		int a=0;
-		for(Classification cla:list){
-			json.append("{");
-			json.append("\"text\":");
-			json.append(" \""+cla.getName()+"\",");
-			int b=0;
-			a++;
-			json.append("\"children\":[");
-			for(Product product:cla.getProduct()){
-				json.append("{");
-				json.append("\"id\":");
-				json.append("\""+product.getProduct_id().toString()+"\",");
-				json.append("\"text\":");
-				json.append(" \""+product.getNumber()+"\"");
-				b++;
-				if(b<cla.getProduct().size()){
-					json.append("},");
-				}else{
-					json.append("}");
+		JSONArray json=new JSONArray();
+		for(int i=0;list.size()>i;i++){
+			JSONObject obj=new JSONObject();
+			JSONArray arr=new JSONArray();
+			Classification classification = list.get(i);
+			Set<Product> products = classification.getProduct();
+			if(products.size()>0){			
+				obj.accumulate("id", classification.getClassification_id());
+				obj.accumulate("text", classification.getName());
+				for(Product product:products){
+					JSONObject obj2=new JSONObject();
+					obj2.accumulate("id",product.getProduct_id());
+					obj2.accumulate("text",product.getName());
+					arr.add(obj2);
 				}
-			}
-			json.append("]");
-			if(a<list.size()){
-				json.append("},");
-			}else{
-				json.append("}");
+				obj.accumulate("children",arr);
+				json.add(obj);
 			}
 		}
-		json.append("]");
+		
 		return json.toString();
 	}
 

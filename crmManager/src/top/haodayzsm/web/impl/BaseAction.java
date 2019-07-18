@@ -3,16 +3,12 @@ package top.haodayzsm.web.impl;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.apache.struts2.ServletActionContext;
-
 import com.opensymphony.xwork2.ActionSupport;
 import com.opensymphony.xwork2.ModelDriven;
-
 import top.haodayzsm.pojo.User;
 
 public class BaseAction<T> extends ActionSupport implements ModelDriven<T>{
@@ -51,6 +47,7 @@ public class BaseAction<T> extends ActionSupport implements ModelDriven<T>{
 	}
 	public static void printJson(String json) throws IOException{
 		getResponse().setContentType("text/json;charset=utf-8");
+		System.out.println(json);
 		print(json);
 	}
 	public static HttpServletRequest getRequest(){

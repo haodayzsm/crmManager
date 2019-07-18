@@ -18,5 +18,8 @@ public interface IBaseDao<T> {
 	public boolean pageQuery(PageBean pageBean);
 	public Object findByCondition(String hql);
 	public List findByCondition(DetachedCriteria criteria);
-	
+	public List findByCondition(Long id,String key);
+	public List findById(Long id);
+	public boolean deleteById(Long id);
+	List findAllActivation(String status);
 }

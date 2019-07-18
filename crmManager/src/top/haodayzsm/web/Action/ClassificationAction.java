@@ -9,7 +9,6 @@ import net.sf.json.JSONArray;
 import net.sf.json.JsonConfig;
 import top.haodayzsm.pojo.Classification;
 import top.haodayzsm.service.IClassificationService;
-import top.haodayzsm.utils.Utils;
 import top.haodayzsm.web.impl.BaseAction;
 
 @Controller(value="classificationAction")
@@ -17,6 +16,7 @@ import top.haodayzsm.web.impl.BaseAction;
 public class ClassificationAction extends BaseAction<Classification> {
 	@Resource(name="classificationService")
 	IClassificationService classificationService;
+	Long id;
 	/*
 	 * 商品分类信息
 	 */
@@ -27,31 +27,37 @@ public class ClassificationAction extends BaseAction<Classification> {
 			jsonConfig.setExcludes(new String[]{"product"});
 			String json = JSONArray.fromObject(list,jsonConfig).toString();
 			System.out.println("json:"+json);
-			Utils.printJson(json);
+			this.printJson(json);
 		} catch (IOException e) {
 			e.printStackTrace();
-			
 		}
 		return NONE;
 	}
 	public String save() throws IOException{
-		Utils.print(classificationService.save(model));
+		this.print(classificationService.save(model));
 		return NONE;
 	}
 	public String updata() throws IOException{
-		Utils.print(classificationService.updata(model));
+		this.print(classificationService.updata(model));
 		return NONE;
 	}
 	public String delete() throws IOException{
-		Utils.print(classificationService.delete(model));
+		System.out.println(model.getClassification_id());
+		this.print(classificationService.delete(id));
 		return NONE;
 	}
 	public String tree() throws IOException{
-		Utils.printJson(classificationService.tree());
+		this.printJson(classificationService.tree());
 		return NONE;
 	}
 	public String combobox() throws IOException{
-		Utils.printJson(classificationService.combobox());
+		this.printJson(classificationService.combobox());
 		return NONE;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 }

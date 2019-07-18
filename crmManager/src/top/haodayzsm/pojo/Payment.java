@@ -14,6 +14,7 @@ public class Payment implements java.io.Serializable{
 		this.customer = customer;
 		this.customer_id=customer_id;
 	}
+	public Payment(){}
 	public Long getPayment_id() {
 		return payment_id;
 	}

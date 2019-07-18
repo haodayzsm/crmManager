@@ -8,10 +8,12 @@ public class Supplier implements java.io.Serializable{
 	private String name;
 	private String location;
 	private Integer money;
-	private Set<Product> product=new HashSet<Product>();
-	private Set<SupplierReturn> supplierReturn = new HashSet<SupplierReturn>();
-	private Set<Storage> storage=new HashSet<Storage>();
-	private Set<SupplierPayment> supplierPayment=null;
+	private String remarks;
+	private String status="activation";
+//	private Set<Product> product=new HashSet<Product>();
+//	private Set<SupplierReturn> supplierReturn = new HashSet<SupplierReturn>();
+//	private Set<Storage> storage=new HashSet<Storage>();
+//	private Set<SupplierPayment> supplierPayment=null;
 	public Long getSupplier_id() {
 		return supplier_id;
 	}
@@ -36,29 +38,41 @@ public class Supplier implements java.io.Serializable{
 	public void setMoney(Integer money) {
 		this.money = money;
 	}
-	public Set<Product> getProduct() {
-		return product;
+//	public Set<Product> getProduct() {
+//		return product;
+//	}
+//	public void setProduct(Set<Product> product) {
+//		this.product = product;
+//	}
+//	public Set<SupplierReturn> getSupplierReturn() {
+//		return supplierReturn;
+//	}
+//	public void setSupplierReturn(Set<SupplierReturn> supplierReturn) {
+//		this.supplierReturn = supplierReturn;
+//	}
+//	public Set<Storage> getStorage() {
+//		return storage;
+//	}
+//	public void setStorage(Set<Storage> storage) {
+//		this.storage = storage;
+//	}
+//	public Set<SupplierPayment> getSupplierPayment() {
+//		return supplierPayment;
+//	}
+//	public void setSupplierPayment(Set<SupplierPayment> supplierPayment) {
+//		this.supplierPayment = supplierPayment;
+//	}
+	public String getStatus() {
+		return status;
 	}
-	public void setProduct(Set<Product> product) {
-		this.product = product;
+	public void setStatus(String status) {
+		this.status = status;
 	}
-	public Set<SupplierReturn> getSupplierReturn() {
-		return supplierReturn;
+	public String getRemarks() {
+		return remarks;
 	}
-	public void setSupplierReturn(Set<SupplierReturn> supplierReturn) {
-		this.supplierReturn = supplierReturn;
-	}
-	public Set<Storage> getStorage() {
-		return storage;
-	}
-	public void setStorage(Set<Storage> storage) {
-		this.storage = storage;
-	}
-	public Set<SupplierPayment> getSupplierPayment() {
-		return supplierPayment;
-	}
-	public void setSupplierPayment(Set<SupplierPayment> supplierPayment) {
-		this.supplierPayment = supplierPayment;
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 }

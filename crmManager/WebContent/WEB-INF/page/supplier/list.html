@@ -2,7 +2,7 @@
 	<meta charset="UTF-8">
 </head>
 <div data-options="region:'center',border:false">
-	<table id="supplier-datagrid" class="easyui-datagrid" url="json_supplierAction_list"
+	<table id="supplier-datagrid" class="easyui-datagrid" url="json_supplierAction_activationAll"
 		rownumbers="true" fitColumns="true" singleSelect="true">
 		<thead>
 			<tr>
@@ -16,7 +16,8 @@
 			<a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="supplier_add()" plain="true">添加</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="supplier_edit()" plain="true">修改</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="supplier_remove()" plain="true">删除</a>				
-            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="supplier_reload()" plain="true" onclick="reload()">刷新</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="supplier_reload('#supplier-datagrid')" plain="true" >刷新</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="supplier_deleted()" plain="true" >已删除</a>
 		</tfoot>
 	</table>
 	
@@ -34,6 +35,26 @@
 				<td><input id="supplier-remarks" type="text" name="remarks" class="wu-text" /></td></tr>
 		</table>
 	</form>
+</div >
+<div id="supplier-deleted" class="easyui-window" data-options="closed:true">
+	<table id="supplier-inactivated" class="easyui-datagrid" url="json_supplierAction_inActivatedAll"
+		rownumbers="true" fitColumns="true" singleSelect="true">
+		<thead>
+			<tr>
+				<th field="supplier_id" name="supplier_id" width="10" >厂家编号</th>
+				<th field="name" name='name' width="20" >厂家名字</th>
+				<th field="location" name='location' width="30" >厂家地址</th>
+				<th field="remarks" width="40">备注</th>
+			</tr>
+		</thead>
+		<tfoot>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="reloadDatagrid('#supplier-inactivated')" plain="true">刷新</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" 
+            	onclick="supplier_activation()" plain="true">恢复</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-add" 
+            	onclick="deletePojo($('#supplier-inactivated').datagrid('getSelected').supplier_id,'json_supplierAction_delete',$('#supplier-inactivated'))" plain="true">彻底删除</a> 
+		</tfoot>
+	</table>
 </div>
 <script type="text/javascript">
 	function supplier_add(){
@@ -50,6 +71,7 @@
 			buttons: [{
                 text: '确定',
                 iconCls: 'icon-ok',
+                async : false,
                 handler: function(){
                 	$('#supplier-form').form('submit',{
                 		url:'json_supplierAction_save',
@@ -60,9 +82,9 @@
 							}else{
 								$.messager.alert('信息提示','提交失败！','info');
 							}
-							class_reload();
 						}	
                 	});
+					supplier_reload('#supplier-datagrid');
                 }	
             }, {
                 text: '取消',
@@ -75,6 +97,11 @@
 		class_reload();
 	}
 	function supplier_edit(){
+		var suppliers=$('#supplier-datagrid').datagrid('getSelected');
+		if(suppliers==null){
+			$.messager.alert('错误提示','未选择供应商','info');
+			return ;
+		}
 		var a=$('#supplier-datagrid').datagrid('getSelected');
 		$('#supplier-id').val(a.supplier_id);
 		$('#supplier-name').val(a.name);
@@ -92,6 +119,7 @@
                 handler: function(){
                 	$('#supplier-form').form('submit',{
                 		url:'json_supplierAction_updata',
+                		async : false,
 						success:function(data){
 							if(data=='true'){
 								$.messager.alert('信息提示','提交成功！','info');
@@ -99,9 +127,9 @@
 							}else{
 								$.messager.alert('信息提示','提交失败！','info');
 							}
-							supplier_reload();
 						}	
                 	});
+                	supplier_reload('#supplier-datagrid');
                 }	
             }, {
                 text: '取消',
@@ -114,18 +142,60 @@
 		supplier_reload();
 	}
 	function supplier_remove(){
+		var suppliers=$('#supplier-datagrid').datagrid('getSelected');
+		if(suppliers==null){
+			$.messager.alert('错误提示','未选择供应商','info');
+			return ;
+		}
 		$.ajax({
 			type:"post",
-			url:'json_supplierAction_delete',
-			data:$('#supplier-datagrid').datagrid('getSelected'),
-			success:function(){
-				supplier_reload();
+			url:'json_supplierAction_inActivated',
+			data:suppliers,
+			async : false,
+			success:function(data){
+				if(data=='true'){
+					$.messager.alert('恢复提示','恢复成功','info');
+					supplier_reload('#supplier-inactivated');
+					supplier_reload('#supplier-datagrid');
+				}else{
+					$.messager.alert('恢复提示','恢复失败','info');
+				}
+				supplier_reload('#supplier-datagrid');
 			}
 		});
-		supplier_reload();
 	}
-	function supplier_reload(){
-		$('#supplier-datagrid').datagrid('reload');
+	function supplier_deleted(){
+		supplier_reload('#supplier-inactivated');
+		$('#supplier-deleted').window({			
+			closed:false,
+			width:600,
+			height:600
+		})
+	}
+	function supplier_activation(){
+		var suppliers=$('#supplier-inactivated').datagrid('getSelected');
+		if(suppliers==null){
+			$.messager.alert('错误提示','未选择供应商','info');
+			return ;
+		}
+		$.ajax({
+			type:"post",
+			url:'json_supplierAction_activation',
+			data:$('#supplier-inactivated').datagrid('getSelected'),
+			async : false,
+			success:function(data){
+				if(data=='true'){
+					$.messager.alert('恢复提示','恢复成功','info');
+					supplier_reload('#supplier-inactivated');
+					supplier_reload('#supplier-datagrid');
+				}else{
+					$.messager.alert('恢复提示','恢复失败','info');
+				}
+			}
+		});
+	}
+	function supplier_reload(id){
+		$(id).datagrid('reload');
 	}
 </script>
 

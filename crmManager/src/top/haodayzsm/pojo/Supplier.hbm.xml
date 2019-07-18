@@ -8,8 +8,10 @@
 		</id>
 		<property name="name"></property>
 		<property name="location"></property>
+		<property name="status"></property>
 		<property name="money"></property>
-		<set name="product">
+		<property name="remarks"></property>
+		<!-- <set name="product" cascade="all" inverse="true" >
 			<key><column name="supplier_id"></column></key>
 			<one-to-many class="Product"/>
 		</set>
@@ -24,6 +26,6 @@
 		<set name="supplierPayment" cascade="all">
 			<key><column name="supplier_id"></column></key>
 			<one-to-many class="SupplierPayment"/>
-		</set>
+		</set> -->
 	</class>
 </hibernate-mapping>

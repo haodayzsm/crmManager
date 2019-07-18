@@ -1,17 +1,13 @@
 package top.haodayzsm.web.impl;
 import java.io.IOException;
 import java.util.List;
-
 import javax.annotation.Resource;
-
 import org.apache.struts2.ServletActionContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
-
 import net.sf.json.JSONArray;
 import top.haodayzsm.pojo.User;
 import top.haodayzsm.service.IUserService;
-import top.haodayzsm.utils.Utils;
 
 @Controller("userAction")
 @Scope(value="prototype")
@@ -34,14 +30,14 @@ public class UserAction extends BaseAction<User>{
 		}
 	}
 	public String logout(){
-		Utils.getSession().setAttribute("user", null);
-		System.out.println(Utils.getUser());
+		this.getSession().setAttribute("user", null);
+		System.out.println(this.getUser());
 		return LOGIN;
 	}
 	public String list() throws IOException	{
 		List list=userService.findByAll();
 		String json=JSONArray.fromObject(list).toString();
-		Utils.printJson(json);
+		this.printJson(json);
 		return NONE;
 	}
 }

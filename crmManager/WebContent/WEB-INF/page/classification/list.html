@@ -14,8 +14,9 @@
 		<tfoot>
 			<a href="#" class="easyui-linkbutton" iconCls="icon-add" onclick="class_add()" plain="true">添加</a>
             <a href="#" class="easyui-linkbutton" iconCls="icon-edit" onclick="class_edit()" plain="true">修改</a>
-            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" onclick="class_remove()" plain="true">删除</a>				
-            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="class_reload()" plain="true" onclick="reload()">刷新</a>
+            <a href="#" class="easyui-linkbutton" iconCls="icon-remove" 
+            	onclick="deletePojo($('#class-datagrid').datagrid('getSelected').classification_id,'json_classificationAction_delete',$('#class-datagrid'))" plain="true">删除</a>				
+            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="reloadDatagrid($('#class-datagrid'))" plain="true">刷新</a>
 		</tfoot>
 	</table>
 	
@@ -56,7 +57,7 @@
 							}else{
 								$.messager.alert('信息提示','提交失败！','info');
 							}
-							class_reload();
+							reloadDatagrid($('#class-datagrid'))
 						}	
                 	});
                 }	
@@ -94,7 +95,7 @@
 							}else{
 								$.messager.alert('信息提示','提交失败！','info');
 							}
-							class_reload();
+							reloadDatagrid($('#class-datagrid'))
 						}	
                 	});
                 }	
@@ -106,34 +107,6 @@
                 }
             }]
 		});
-	}
-	function class_remove(){
-		$.ajax({
-			type:"post",
-			url:'json_classificationAction_delete',
-			data:$('#class-datagrid').datagrid('getSelected'),
-			success:function(data){
-				if(data=="true"){
-					class_reload();
-				}/* else if(data=="false"){
-					$.ajax({
-						type:"post",
-						url:'json_productAction_delete',
-						data:product_id=$('#class-datagrid').datagrid('getSelected').classification_id,
-						success:function(data){
-							if(data=="true"){
-								class_reload();
-							}else if(data=="false"){
-								
-							}
-						}
-					});
-				} */
-			}
-		});
-	}
-	function class_reload(){
-		$('#class-datagrid').datagrid('reload');
 	}
 </script>
 

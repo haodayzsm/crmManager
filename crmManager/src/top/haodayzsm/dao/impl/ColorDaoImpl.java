@@ -24,9 +24,9 @@ public class ColorDaoImpl extends BaseDaoImpl<Color> implements IColorDao{
 	}
 
 	@Override
-	public Color findByProductId(Long id) {
-		String hql = "from Color c where c.Product_id=?";
-		
-		return (Color) this.getHibernateTemplate().find(hql, id);
+	public List<Color> findByProductId(Long id) {
+		String hql = "from Color c where c.product_id=?";
+		 List<Color> list=(List<Color>) this.getHibernateTemplate().find(hql, id);
+		 return list;
 	}
 }

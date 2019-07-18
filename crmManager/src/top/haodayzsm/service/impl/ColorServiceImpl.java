@@ -1,5 +1,7 @@
 package top.haodayzsm.service.impl;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.context.annotation.Scope;
@@ -17,7 +19,7 @@ public class ColorServiceImpl implements IColorService {
 		return colorDao.delete(color);
 	}
 	@Override
-	public Color findByProductId(Long id) {
+	public List<Color> findByProductId(Long id) {
 		return colorDao.findByProductId(id);
 	}
 	

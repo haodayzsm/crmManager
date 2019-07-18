@@ -18,9 +18,9 @@
 		<property name="classification_id" not-null="true"></property>
 		<property name="supplier"></property>
 		<property name="supplier_id"></property>
-		<set name="color" cascade="all">
+		<set name="color"  inverse="true" cascade="all" >
 			<key><column name="product_id"></column></key>
-			<one-to-many class="Color"/>
+			<one-to-many class="Color" />
 		</set>
 
 	</class>

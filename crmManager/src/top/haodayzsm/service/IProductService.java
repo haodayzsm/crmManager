@@ -10,9 +10,10 @@ public interface IProductService {
 
 	public List findByAll();
 	public String findById(Product product);
-	public boolean delete(Product model);
+	public boolean delete(Long id);
 	public boolean updata(Product model);
 	public boolean saveOrUpdata(Product model);
 	public boolean updataQuantity(Long product_id);
-	public Product findByClassId(Long id);
+	public List<Product> findByClassId(Long id);
+	public List findByCondition(Long id,String key);
 }

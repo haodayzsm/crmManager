@@ -11,15 +11,16 @@
 		<property name="location"></property>
 		<property name="wechat"></property>
 		<property name="money"></property>
-		<set name="payment" >
+		<property name="status"></property>
+		<set name="payment" inverse="true" cascade="all">
 			<key><column name="customer_id"></column></key>
 			<one-to-many class="Payment"/>
 		</set>
-		<set name="order" cascade="all">
+		<set name="order" inverse="true" cascade="all">
 			<key><column name="customer_id"></column></key>
 			<one-to-many class="Order"/>
 		</set>
-		<set name="orderReturn" cascade="all">
+		<set name="orderReturn" inverse="true" cascade="all">
 			<key><column name="customer_id"></column></key>
 			<one-to-many class="CustomerReturn"/>
 		</set>

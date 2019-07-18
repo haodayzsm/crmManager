@@ -8,7 +8,7 @@
 		</id>
 		<property name="name"></property>
 		<property name="remarks"></property>
-		<set name="product" cascade="all">
+		<set name="product" inverse="true" cascade="all" >
 			<key><column name="classification_id"></column></key>
 			<one-to-many class="Product"/>
 		</set>

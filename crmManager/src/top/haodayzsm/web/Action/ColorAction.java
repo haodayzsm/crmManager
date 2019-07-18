@@ -17,7 +17,7 @@ public class ColorAction extends BaseAction<Color> {
 	@Resource(name="colorService")
 	IColorService colorService;
 	public String delete() throws IOException{
-		Utils.print(colorService.delete(model));
+		this.print(colorService.delete(model));
 		return null;
 	}
 }

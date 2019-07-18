@@ -10,7 +10,7 @@ import top.haodayzsm.pojo.Classification;
 public interface IClassificationService {
 	public boolean save(Classification classification);
 	public boolean updata(Classification classification);
-	public boolean delete(Classification classification);
+	public boolean delete(Long id);
 	public Classification findById(Serializable id);
 	public Classification findById(String id);
 	public String tree();

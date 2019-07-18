@@ -43,18 +43,11 @@ public class ProductServiceImpl implements IProductService {
 		return json;
 	}
 	/**
-	 * 删除商品信息，product下有color信息删除color信息后再删除product
+	 * 删除商品信息
 	 */
 	@Override
-	public boolean delete(Product model) {
-		while(true){
-			Color color = colorService.findByProductId(model.getProduct_id());
-			if(color!=null){
-				colorService.delete(color);
-			}else{						
-				return productDao.delete(model);			
-			}
-		}
+	public boolean delete(Long id) {
+		return productDao.deleteById(id);
 	}
 	@Override
 	public boolean updata(Product model) {
@@ -119,7 +112,11 @@ public class ProductServiceImpl implements IProductService {
 		return false;
 	}
 	@Override
-	public Product findByClassId(Long id) {
+	public List<Product> findByClassId(Long id) {
 		return productDao.findByClassId(id);
+	}
+	@Override
+	public List findByCondition(Long id,String key) {
+		return productDao.findByCondition(id,key);
 	}
 }

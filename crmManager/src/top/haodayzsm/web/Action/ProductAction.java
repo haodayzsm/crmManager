@@ -16,7 +16,6 @@ import net.sf.json.JsonConfig;
 import top.haodayzsm.pojo.Product;
 import top.haodayzsm.service.IProductService;
 import top.haodayzsm.utils.PageBean;
-import top.haodayzsm.utils.Utils;
 import top.haodayzsm.web.impl.BaseAction;
 
 @Controller(value="productAction")
@@ -24,6 +23,7 @@ import top.haodayzsm.web.impl.BaseAction;
 public class ProductAction extends BaseAction<Product>{
 	@Resource(name="productService")
 	private IProductService productService;
+	private Long id;
 	private Integer rows;
 	private Integer page;
 	public String pageQuery() throws IOException{
@@ -40,25 +40,25 @@ public class ProductAction extends BaseAction<Product>{
 		String json=JSONObject.fromObject(pageBean, jsonConfig).toString();
 		
 		//ÏìÓ¦£¬IOÁ÷ÏìÓ¦
-		Utils.printJson(json);
+		this.printJson(json);
 		return NONE;
 	}
 	public String list() throws IOException{
 		List list = productService.findByAll();
 		JsonConfig jsonConfig = new JsonConfig();
-		Utils.printJson(JSONArray.fromObject(list).toString());
+		this.printJson(JSONArray.fromObject(list).toString());
 		return NONE;
 	}
 	public String findById() throws IOException{
-		Utils.printJson(productService.findById(model));
+		this.printJson(productService.findById(model));
 		return NONE;
 	}
 	public String saveOrUpdata() throws IOException{
-		Utils.print(productService.saveOrUpdata(model));
+		this.print(productService.saveOrUpdata(model));
 		return NONE;
 	}
 	public String delete() throws IOException{
-		Utils.print(productService.delete(model));
+		this.print(productService.delete(id));
 		return NONE;
 	}
 	
@@ -74,6 +74,12 @@ public class ProductAction extends BaseAction<Product>{
 	}
 	public void setPage(Integer page) {
 		this.page = page;
+	}
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 	
 }

@@ -2,45 +2,63 @@ package top.haodayzsm.web.Action;
 
 import java.io.IOException;
 import java.util.List;
-
 import javax.annotation.Resource;
-
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-
 import net.sf.json.JSONArray;
 import net.sf.json.JsonConfig;
 import top.haodayzsm.pojo.Customer;
 import top.haodayzsm.service.ICustomerService;
-import top.haodayzsm.utils.Utils;
 import top.haodayzsm.web.impl.BaseAction;
 @Component(value="customerAction")
 @Scope(value="prototype")
 public class CustomerAction extends BaseAction<Customer> {
 	@Resource(name="customerService")
 	ICustomerService customerService;
+	private Long id;
 	public String save() throws IOException{
-		Utils.print(customerService.save(model));
+		this.print(customerService.save(model));
 		return null;
 	}
 	public String updata() throws IOException{
-		Utils.print(customerService.updata(model));
+		this.print(customerService.updata(model));
 		return null;
 	}
 	public String delete() throws IOException{
-		Utils.print(customerService.delete(model));
+		this.print(customerService.delete(id));
 		return null;
+	}
+	public String inActivated() throws IOException{
+		this.print(customerService.inActivated(model.getCustomer_id()));
+		return NONE;
+	}
+	public String activation() throws IOException{
+		this.print(customerService.activation(model.getCustomer_id()));
+		return NONE;
 	}
 	public String list() throws IOException{
 		List list = customerService.findByAll();
-		JsonConfig jsonConfig=new JsonConfig();
-		jsonConfig.setExcludes(new String[]{"payment","order","orderReturn"});
-		String json=JSONArray.fromObject(list,jsonConfig).toString();
-		Utils.printJson(json);
+		this.printJson(JSONArray.fromObject(list).toString());
 		return null;
 	}
 	public String combobox() throws IOException{
-		Utils.printJson(customerService.combobox());
+		this.printJson(customerService.combobox());
 		return null;
+	}
+	public String activationAll() throws IOException{
+		this.printJson(customerService.findAllactivation());
+		return NONE;
+	}
+	public String inActivatedAll() throws IOException{
+		this.printJson(customerService.findAllinActivated());
+		return NONE;
+	}
+	
+	
+	public Long getId() {
+		return id;
+	}
+	public void setId(Long id) {
+		this.id = id;
 	}
 }	
